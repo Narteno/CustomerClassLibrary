@@ -7,10 +7,10 @@ namespace CCL.Test
     public class AddressValidatorTests
     {
         [Fact]
-        public void TestREQUIRED()
+        public void ShouldNotBeEmpty()
         {
             Address address = new Address("", "none", AddressType.Billing, "", "", "", "");
-            AddressValidator AV = new AddressValidator();
+            AddressValidator validator = new AddressValidator();
             List<string> expected = new()
             {
                 "Address Line is REQUIRED",
@@ -18,18 +18,17 @@ namespace CCL.Test
                 "Postal Code is REQUIRED",
                 "State is REQUIRED",
                 "Country is REQUIRED"
-
             };
-            Assert.Equal(expected, AV.AddressValid(address));
+            Assert.Equal(expected, validator.RunAddressValidator(address));
         }
         [Fact]
-        public void TestMaxChar()
+        public void ShouldNotBeTooLong()
         {
             Address address = new Address("this string is too long! this string is too long! this string is too long! this string is too long!!!",
                 "this string is too long! this string is too long! this string is too long! this string is too long!!!", 
                 AddressType.Billing, "this string is too long! this string is too long!!!", 
                 "1231234", "this string is too long!", "Canada");
-            AddressValidator AV = new AddressValidator();
+            AddressValidator validator = new AddressValidator();
             List<string> expected = new()
             {
                 "The maximum length of 'Address Line' is 100 characters",
@@ -39,20 +38,20 @@ namespace CCL.Test
                 "The maximum length of 'State' is 20 characters"
 
             };
-            Assert.Equal(expected, AV.AddressValid(address));
+            Assert.Equal(expected, validator.RunAddressValidator(address));
         }
         [Fact]
-        public void TestCountry()
+        public void CountryShouldBeAbleEqual()
         {
             Address address = new Address("Address1", "Address2", AddressType.Shipping, "City",
                 "Postal", "State", "Texas");
             List<string> expected = new() { "Country should be 'Unated States' or 'Canada'" };
-            AddressValidator AV = new AddressValidator();
-            Assert.Equal(expected, AV.AddressValid(address));
+            AddressValidator validator = new AddressValidator();
+            Assert.Equal(expected, validator.RunAddressValidator(address));
             address = new Address("Address1", "Address2", AddressType.Shipping, "City",
                 "Postal", "State", "Canada");
             expected = new List<string>();
-            Assert.Equal(expected, AV.AddressValid(address));
+            Assert.Equal(expected, validator.RunAddressValidator(address));
         }
     }
 }
